@@ -6,7 +6,8 @@ from MiniImagenet import MiniImagenet
 import torch
 from torch.autograd import Variable
 import numpy as np
-from tensorboardX import SummaryWriter
+# from tensorboardX import SummaryWriter
+from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader
 
 
