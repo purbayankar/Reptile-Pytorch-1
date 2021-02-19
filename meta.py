@@ -85,7 +85,8 @@ class Learner(nn.Module):
 		loss, pred = self.net_pi(query_x, query_y)
 		# pred: [setsz, n_way], indices: [setsz]
 		_, indices = torch.max(pred, dim=1)
-		correct = torch.eq(indices, query_y).sum().data[0]
+# 		correct = torch.eq(indices, query_y).sum().data[0]
+		correct = torch.eq(indices, query_y).sum().item()
 		acc = correct / query_y.size(0)
 
 		# gradient for validation on theta_pi
