@@ -208,6 +208,8 @@ class MetaLearner(nn.Module):
 			if sum_grads_pi is None:
 				sum_grads_pi = grad_pi
 			else:  # accumulate all gradients from different episode learner
+				print(self.store_grad.shape)
+				print(grad_pi.shape)
 				sum_grads_pi = [cosine_angle(self.store_grad,grad_pi)*torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
 		self.store_grad = sum_grads_pi.clone()
 			
