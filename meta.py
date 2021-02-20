@@ -204,7 +204,7 @@ class MetaLearner(nn.Module):
 			if sum_grads_pi is None:
 				sum_grads_pi = grad_pi
 			else:  # accumulate all gradients from different episode learner
-				sum_grads_pi = [cosine_angle(sum_grads_pi, grad_pi)*torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
+				sum_grads_pi = [cosine_angle(i, j)*torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
 
 		# As we already have the grads to update
 		# We use a dummy forward / backward pass to get the correct grads into self.net
