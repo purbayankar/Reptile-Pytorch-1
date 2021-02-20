@@ -6,6 +6,11 @@ from torch.autograd import Variable
 from torch.nn import functional as F
 import numpy as np
 
+def cosine_angle(a, b):
+    tan_theta = abs((a - b) / (1 + a * b))
+    cos_theta = 1 / torch.sqrt(1 + torch.pow(tan_theta,2))
+    return cos_theta
+
 
 class Learner(nn.Module):
 	"""
@@ -199,7 +204,7 @@ class MetaLearner(nn.Module):
 			if sum_grads_pi is None:
 				sum_grads_pi = grad_pi
 			else:  # accumulate all gradients from different episode learner
-				sum_grads_pi = [torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
+				sum_grads_pi = [cosine_angle(sum_grads_pi, grad_pi)*torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
 
 		# As we already have the grads to update
 		# We use a dummy forward / backward pass to get the correct grads into self.net
