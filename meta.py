@@ -145,6 +145,8 @@ class MetaLearner(nn.Module):
 		self.learner = Learner(net_cls, *net_cls_args)
 		# the optimizer is to update theta parameters, not theta_pi parameters.
 		self.optimizer = optim.Adam(self.learner.parameters(), lr=beta)
+		
+		self.store_grad = None
 
 	def write_grads(self, dummy_loss, sum_grads_pi):
 		"""
@@ -201,10 +203,14 @@ class MetaLearner(nn.Module):
 		for i in range(meta_batchsz):
 			_, grad_pi, episode_acc = self.learner(support_x[i], support_y[i], query_x[i], query_y[i], self.num_updates)
 			accs.append(episode_acc)
+			if self.store_grad == None:
+				self.store_grad = grad_pi
 			if sum_grads_pi is None:
 				sum_grads_pi = grad_pi
 			else:  # accumulate all gradients from different episode learner
-				sum_grads_pi = [torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
+				sum_grads_pi = [cosine_angle(self.store_grad,grad_pi)*torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
+		self.store_grad = sum_grads_pi.clone()
+			
 
 		# As we already have the grads to update
 		# We use a dummy forward / backward pass to get the correct grads into self.net
