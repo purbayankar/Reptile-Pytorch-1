@@ -12,6 +12,7 @@ def cosine_angle(a, b):
     return cos_theta
 
 
+
 class Learner(nn.Module):
 	"""
 	This is a learner class, which will accept a specific network module, such as OmniNet that define the network forward
@@ -208,9 +209,6 @@ class MetaLearner(nn.Module):
 			if sum_grads_pi is None:
 				sum_grads_pi = grad_pi
 			else:  # accumulate all gradients from different episode learner
-				print(grad_pi[0].shape)
-				print(grad_pi[1].shape)
-				print(grad_pi[2].shape)
 				sum_grads_pi = [cosine_angle(self.store_grad,grad_pi)*torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
 		self.store_grad = sum_grads_pi.clone()
 			
