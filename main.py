@@ -50,7 +50,7 @@ def main():
 
 
 	# main loop
-	for episode_num in range(200000):
+	for episode_num in range(100):
 
 		# 1. train
 		if dataset == 'omniglot':
