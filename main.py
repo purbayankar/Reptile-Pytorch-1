@@ -16,7 +16,8 @@ def main():
 	n_way = 5
 	k_shot = 1
 	k_query = k_shot
-	meta_lr = 1e-3
+# 	meta_lr = 1e-3
+	meta_lr = 1
 	num_updates = 5
 	dataset = 'omniglot'
 
