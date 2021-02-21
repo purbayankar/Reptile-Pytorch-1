@@ -10,7 +10,7 @@ def flat_and_join(x):
     """
     This functions flattens each tensor in the tensor list and combines (concatenate) into a single vector
     """
-    flat_vecs = [x.data.view(-1) for x in x.parameters()]
+    flat_vecs = [x.data.view(-1) for x in x]
     return torch.cat(flat_vecs, dim = 0)
 
 def cosine_angle(a_tensors, b_tensors):
