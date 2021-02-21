@@ -221,7 +221,7 @@ class MetaLearner(nn.Module):
 				print("The cosine angle is {}".format(cosine_angle(self.store_grad, grad_pi)))
 				sum_grads_pi = [cosine_angle(self.store_grad, grad_pi)*torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
 		print("The len :{}".format(len(sum_grads_pi)))
-		self.store_grad = sum_grads_pi.clone()
+		self.store_grad = sum_grads_pi
 			
 
 		# As we already have the grads to update
