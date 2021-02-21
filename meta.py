@@ -6,12 +6,18 @@ from torch.autograd import Variable
 from torch.nn import functional as F
 import numpy as np
 
-def cosine_angle(a, b):
+def flat_and_join(x):
+    """
+    This functions flattens each tensor in the tensor list and combines (concatenate) into a single vector
+    """
+    flat_vecs = [x.data.view(-1) for x in x.parameters()]
+    return torch.cat(flat_vecs, dim = 0)
+
+def cosine_angle(a_tensors, b_tensors):
+    a, b = flat_and_join(a_tensors), flat_and_join(b_tensors)
     tan_theta = abs((a - b) / (1 + a * b))
     cos_theta = 1 / torch.sqrt(1 + torch.pow(tan_theta,2))
     return cos_theta
-
-
 
 class Learner(nn.Module):
 	"""
@@ -209,7 +215,7 @@ class MetaLearner(nn.Module):
 			if sum_grads_pi is None:
 				sum_grads_pi = grad_pi
 			else:  # accumulate all gradients from different episode learner
-				sum_grads_pi = [cosine_angle(self.store_grad,grad_pi)*torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
+				sum_grads_pi = [cosine_angle(self.store_grad, grad_pi)*torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
 		self.store_grad = sum_grads_pi.clone()
 			
 
