@@ -15,8 +15,11 @@ def flat_and_join(x):
 
 def cosine_angle(a_tensors, b_tensors):
     a, b = flat_and_join(a_tensors), flat_and_join(b_tensors)
-    tan_theta = abs((a - b) / (1 + a * b))
-    cos_theta = 1 / torch.sqrt(1 + torch.pow(tan_theta,2))
+    inner_product = torch.dot(a, b)
+    a_norm, b_norm = torch.norm(a), torch.norm(b)
+    cos_theta = abs(torch.div(inner_product, a_norm * b_norm))
+#     tan_theta = abs((a - b) / (1 + a * b))
+#     cos_theta = 1 / torch.sqrt(1 + torch.pow(tan_theta,2))
     return cos_theta
 
 class Learner(nn.Module):
