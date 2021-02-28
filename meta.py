@@ -157,6 +157,7 @@ class MetaLearner(nn.Module):
 		self.optimizer = optim.Adam(self.learner.parameters(), lr=beta)
 		
 		self.store_grad = None
+		self.prv_angle  = 0
 
 	def write_grads(self, dummy_loss, sum_grads_pi):
 		"""
@@ -209,19 +210,30 @@ class MetaLearner(nn.Module):
 		# support_x[i]: [setsz, c_, h, w]
 		# we do different learning task sequentially, not parallel.
 		accs = []
+		cos_store = []
 		# for each task/episode.
 		for i in range(meta_batchsz):
 			_, grad_pi, episode_acc = self.learner(support_x[i], support_y[i], query_x[i], query_y[i], self.num_updates)
 			accs.append(episode_acc)
-			if self.store_grad == None:
-				self.store_grad = grad_pi
+			
+			if self.store_grad is None:
+				store_grad = grad_pi
+			else:
+				store_grad = self.store_grad
+			
+			cos_store.append(cosine_angle(store_grad, grad_pi))
+			
+			
 			if sum_grads_pi is None:
 				sum_grads_pi = grad_pi
 			else:  # accumulate all gradients from different episode learner
 # 				print("The cosine angle is {}".format(cosine_angle(self.store_grad, grad_pi)))
-				sum_grads_pi = [(1-cosine_angle(self.store_grad, grad_pi))*torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
+				sum_grads_pi = [torch.add(i, j) for i, j in zip(sum_grads_pi, grad_pi)]
 # 		print("The len :{}".format(len(sum_grads_pi)))
-		self.store_grad = sum_grads_pi
+		min_angle = torch.max(torch.tensor(cos_store))
+	        self.prv_angle = torch.max(self.prv_angle, min_angle)
+		
+		self.store_grad = [torch.mul(i, self.pre_angle) for i in sum_grads_pi] 
 			
 
 		# As we already have the grads to update
