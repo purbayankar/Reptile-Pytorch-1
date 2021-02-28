@@ -13,7 +13,7 @@ from torch.utils.data import DataLoader
 
 def main():
 	meta_batchsz = 32
-	n_way = 5
+	n_way = 20
 	k_shot = 1
 	k_query = k_shot
 	meta_lr = 1e-3
@@ -50,7 +50,7 @@ def main():
 
 
 	# main loop
-	for episode_num in range(100):
+	for episode_num in range(1500):
 
 		# 1. train
 		if dataset == 'omniglot':
@@ -73,6 +73,8 @@ def main():
 			query_y = Variable(batch_test[3]).cuda()
 
 		# backprop has been embeded in forward func.
+		if episode_num % 100 = 0:
+			meta.prv_angle = 0
 		accs = meta(support_x, support_y, query_x, query_y)
 		train_acc = np.array(accs).mean()
 
