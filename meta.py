@@ -232,8 +232,11 @@ class MetaLearner(nn.Module):
 # 		print("The len :{}".format(len(sum_grads_pi)))
 		min_angle = torch.max(torch.tensor(cos_store))
 	        self.prv_angle = torch.max(self.prv_angle, min_angle)
-		
-		self.store_grad = [torch.mul(i, self.pre_angle) for i in sum_grads_pi] 
+		if self.store_grad is not None:
+			sum_grads_pi = [torch.mul(i, self.prv_angle) for i in sum_grads_pi] 
+		else:
+			sum_grads_pi = [torch.mul(i, min_angle) for i in sum_grads_pi] 
+		self.store_grad = sum_grads_pi 
 			
 
 		# As we already have the grads to update
